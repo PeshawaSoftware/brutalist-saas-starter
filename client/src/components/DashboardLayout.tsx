@@ -19,7 +19,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { getLoginUrl } from "@/const";
+import { getLoginUrl, isAuthConfigured, redirectToLogin } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -57,6 +57,9 @@ export default function DashboardLayout({
   }
 
   if (!user) {
+    const loginUrl = getLoginUrl();
+    const authConfigured = isAuthConfigured();
+
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
@@ -65,17 +68,20 @@ export default function DashboardLayout({
               Sign in to continue
             </h1>
             <p className="text-sm text-muted-foreground text-center max-w-sm">
-              Access to this dashboard requires authentication. Continue to launch the login flow.
+              {authConfigured
+                ? "Access to this dashboard requires authentication. Continue to launch the login flow."
+                : "Access to this dashboard requires authentication. Configure VITE_OAUTH_PORTAL_URL and VITE_APP_ID to enable sign-in."}
             </p>
           </div>
           <Button
             onClick={() => {
-              window.location.href = getLoginUrl();
+              redirectToLogin();
             }}
             size="lg"
             className="w-full shadow-lg hover:shadow-xl transition-all"
+            disabled={!loginUrl}
           >
-            Sign in
+            {authConfigured ? "Sign in" : "Auth not configured"}
           </Button>
         </div>
       </div>

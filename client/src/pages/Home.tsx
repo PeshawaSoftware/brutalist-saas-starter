@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
-import { getLoginUrl } from '@/const';
+import { redirectToLogin } from '@/const';
 import {
   WebGLBackground,
   CustomCursor,
@@ -18,9 +18,11 @@ export default function Home() {
 
   const handleCtaClick = () => {
     if (!isAuthenticated) {
-      window.location.href = getLoginUrl();
-      return;
+      if (redirectToLogin()) {
+        return;
+      }
     }
+
     const element = document.querySelector('#pricing');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
